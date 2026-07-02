@@ -1,0 +1,29 @@
+name: APK Derleyici
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get Buildozer Cache
+        uses: actions/cache@v2
+        with:
+          path: .buildozer
+          key: ${{ runner.os }}-buildozer-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildozer-
+
+      - name: Build APK with Buildozer
+        uses: ArtemGovorov/buildozer-action@v1
+        id: buildozer
+        with:
+          command: buildozer android debug
+          buildozer_version: master
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: package
+          path: ${{ steps.buildozer.outputs.filename }}
