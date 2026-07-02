@@ -4,26 +4,18 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v2
+      - name: Kodu Klonla
+        uses: actions/checkout@v4
 
-      - name: Get Buildozer Cache
-        uses: actions/cache@v2
+      - name: APK Derle (Kivy Resmi Docker Sistemi)
+        uses: docker://kivy/buildozer:latest
         with:
-          path: .buildozer
-          key: ${{ runner.os }}-buildozer-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildozer-
+          args: buildozer android debug
 
-      - name: Build APK with Buildozer
-        uses: ArtemGovorov/buildozer-action@v1
-        id: buildozer
+      - name: APK Dosyasını Çıkart
+        uses: actions/upload-artifact@v4
         with:
-          command: buildozer android debug
-          buildozer_version: master
-
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: package
-          path: ${{ steps.buildozer.outputs.filename }}
+          name: iptracker-apk
+          path: bin/*.apk
