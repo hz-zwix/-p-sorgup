@@ -12,7 +12,8 @@ jobs:
       - name: APK Derle (Kivy Resmi Docker Sistemi)
         uses: docker://kivy/buildozer:latest
         with:
-          args: buildozer android debug
+          entrypoint: /bin/bash
+          args: -c "yes | buildozer android debug"
 
       - name: APK Dosyasını Çıkart
         uses: actions/upload-artifact@v4
